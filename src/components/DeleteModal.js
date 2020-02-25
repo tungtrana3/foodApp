@@ -10,16 +10,17 @@ export default class DeleteFoodModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            foodId : '',
+            foodId: '',
             status: false,
             message: '',
         }
     }
-    showDeleteFoodModal = (id) => {
+    showDeleteFoodModal = (item) => {
         this.setState({
-            foodId : id,
+            foodId: item.id,
+            foodName: item.food_name,
         });
-        this.refs.myModal.open(id);
+        this.refs.myModal.open(item);
     }
     render() {
         return (
@@ -41,8 +42,57 @@ export default class DeleteFoodModal extends React.Component {
                     fontSize: 16,
                     fontWeight: 'bold',
                     textAlign: 'center',
-                    marginTop: 40
-                }}>You wanna delete it : {this.state.foodId}</Text>
+                    marginTop: 30
+                }}>Mày định xóa hả : </Text>
+                <Text style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    marginTop: 5
+                }}>{this.state.foodName}</Text>
+                <TouchableOpacity
+                    style={{
+                        backgroundColor: 'blue',
+                        padding: 8,
+                        marginLeft: 70,
+                        marginRight: 70,
+                        height: 40,
+                        borderRadius: 6,
+                        backgroundColor: 'mediumseagreen',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                    onPress={() => {
+                        fetch('http://10.0.2.2:8000/api/delete-food', {
+                            method: 'POST',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                id:this.state.foodId,
+                            })
+                        })
+                            .then((response) => response.json())
+                            .then((responseJson) => {
+                                this.setState({
+                                    isLoading: false,
+                                    status: responseJson.status,
+                                    message: responseJson.message,
+                                }, function () {
+                                });
+                                if(this.state.status==true){
+                                    alert("Xóa thành công "+ this.state.message);
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                                alert("Xóa thất bại "+ this.state.message);
+                            });
+                    }}
+                >
+                    <Text style={{ fontSize: 18, color: 'white', flex: 1 }}>Ừ</Text>
+                </TouchableOpacity>
             </Modal>
         );
     }

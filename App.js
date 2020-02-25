@@ -45,8 +45,8 @@ export default class FetchExample extends React.Component {
   _editFoodPress(item) {
     this.refs.editModal.showEditFoodModal(item);
   }
-  _deleteFoodPress(id) {
-    this.refs.deleteModal.showDeleteFoodModal(id);
+  _deleteFoodPress(item) {
+    this.refs.deleteModal.showDeleteFoodModal(item);
   }
   render() {
     if (this.state.isLoading) {
@@ -77,6 +77,36 @@ export default class FetchExample extends React.Component {
             </Image>
           </TouchableHighlight>
         </View>
+        <View style={{
+          backgroundColor: 'blue',
+          height: 64,
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          alignItems: 'center'
+        }}>
+          <TouchableHighlight
+            style={{ marginRight: 10 }}
+            underlayColor='tomato'
+            onPress={() => {
+              var requestOptions = {
+                method: 'POST',
+                redirect: 'follow'
+              };
+              
+              fetch("http://10.0.2.2:8000/api/update-food?food_name=apple&type_id=5&food_description=My zfgd&food_img=https://i.pinimg.com/236x/6d/44/df/6d44df91414e9adaa37cb373ce60fc8a.jpg&food_price=50&food_id=10", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+          }}
+          >
+            <Image
+              style={{ width: 35, height: 35 }}
+              source={require('./src/img/addIcon.png')}
+            >
+            </Image>
+          </TouchableHighlight>
+        </View>
+        
         <FlatList
           data={this.state.dataSource}
           renderItem={({ item, index }) =>
@@ -104,7 +134,7 @@ export default class FetchExample extends React.Component {
                         source={require('./src/img/editIcon.png')}>
                       </Image>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {this._deleteFoodPress(item.id)}} style={styles.btn_foodItem}>
+                    <TouchableOpacity onPress={() => {this._deleteFoodPress(item)}} style={styles.btn_foodItem}>
                       <Image
                         style={{ width: 40, height: 40 }}
                         source={require('./src/img/deleteIcon.png')}>
